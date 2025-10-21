@@ -19,6 +19,7 @@ AI-Agents-and-Prompts/
 │   │   └── add-task-emergency.md
 │   ├── GitHub Integration/
 │   │   ├── create-issue.md
+│   │   ├── enrich-issue.md
 │   │   ├── fix-issue.md
 │   │   └── implement-feature.md
 │   ├── Health Checks/
@@ -79,6 +80,27 @@ Adds high-priority urgent tasks that need immediate attention.
 
 #### `/create-issue`
 Creates a GitHub issue with proper template formatting (feature/bug/task).
+
+#### `/enrich-issue <number>`
+Researches the codebase and enriches a GitHub issue before implementation. Performs 15-25 minute deep-dive to:
+- Find related components and reusable patterns
+- Identify blockers and dependencies
+- Validate complexity estimates with multi-factor scoring
+- Check if Architecture Decision Record (ADR) is needed
+- Post comprehensive findings as GitHub comment
+
+Prevents mid-implementation surprises and improves planning accuracy.
+
+**Example:**
+```
+/enrich-issue 123
+```
+
+**When to use:**
+- Before starting any 🟡 Medium or 🔴 High complexity issue
+- When issue lacks implementation details
+- To validate initial complexity estimates
+- Before feature decomposition decisions
 
 #### `/fix-issue <number>`
 Reads a GitHub issue, implements the fix, and creates a commit that closes it.
