@@ -6,9 +6,16 @@ A collection of custom Claude Code agents and slash commands to enhance producti
 
 ```
 AI-Agents-and-Prompts/
-├── agents/                    # Custom Claude Code agents
-│   └── chrome-extension-troubleshooter.md
-├── commands/                  # Slash commands for workflow automation
+├── agents/                    # Custom Claude Code agents (8 total)
+│   ├── chrome-extension-troubleshooter.md
+│   ├── debug-coordinator.md
+│   ├── feature-orchestrator.md
+│   ├── figma-ui-engineer.md
+│   ├── knowledge-navigator.md
+│   ├── prompt-engineer.md
+│   ├── security-auditor.md
+│   └── test-suite-builder.md
+├── commands/                  # Slash commands for workflow automation (19 total)
 │   ├── Session Management/
 │   │   ├── resume-session.md
 │   │   └── resume-session-reset.md
@@ -36,21 +43,129 @@ AI-Agents-and-Prompts/
 
 ## 🤖 Agents
 
-### Chrome Extension Troubleshooter
+### 🔍 Debugging & Analysis
+
+#### Debug Coordinator
+**File:** `agents/debug-coordinator.md`
+**Model:** Opus (most capable)
+**Purpose:** Elite debugging command center for complex issues requiring systematic investigation.
+
+**When to use:**
+- Race conditions and intermittent bugs
+- Memory leaks and performance degradation
+- Production-only issues
+- Multi-layer system problems requiring parallel investigation
+
+**Example:** *"We have a race condition that only happens under high load"*
+
+---
+
+#### Knowledge Navigator
+**File:** `agents/knowledge-navigator.md`
+**Model:** Sonnet
+**Purpose:** Expert at finding and understanding information across codebases and documentation.
+
+**When to use:**
+- Understanding system architecture
+- Locating implementations and code examples
+- Multi-source technical research
+- "Code archaeology" tasks
+
+**Example:** *"How does our authentication handle refresh tokens?"*
+
+---
+
+### 🛠️ Development & Implementation
+
+#### Feature Orchestrator
+**File:** `agents/feature-orchestrator.md`
+**Model:** Opus
+**Purpose:** Handles complex features (>4 hours) through parallel development or comprehensive planning.
+
+**When to use:**
+- Features requiring 7+ parallel tasks
+- Complex features needing decomposition
+- Creating detailed GitHub implementation plans
+
+**Example:** *"Build a user dashboard with profile, activity feed, and settings"*
+
+---
+
+#### Figma UI Engineer
+**File:** `agents/figma-ui-engineer.md`
+**Model:** Sonnet
+**Purpose:** Converts Figma designs into pixel-perfect React components.
+
+**When to use:**
+- Implementing designs from Figma files
+- Ensuring design fidelity and accessibility
+- Updating components to match new design specs
+
+**Example:** *"Implement the dashboard header from the Figma file"*
+
+---
+
+### 🔐 Security & Quality
+
+#### Security Auditor
+**File:** `agents/security-auditor.md`
+**Model:** Opus
+**Purpose:** Identifies vulnerabilities using OWASP Top 10 framework with risk classification.
+
+**When to use:**
+- Pre-deployment security reviews
+- Vulnerability scans and compliance checks
+- Authentication/authorization audits
+- SOC 2 / compliance preparation
+
+**Example:** *"Review this authentication code before we deploy to production"*
+
+---
+
+#### Test Suite Builder
+**File:** `agents/test-suite-builder.md`
+**Model:** Sonnet
+**Purpose:** Creates comprehensive test suites using TDD methodology.
+
+**When to use:**
+- Creating unit and integration tests
+- TDD workflows (tests-first development)
+- Improving test coverage
+- Quality assurance before deployment
+
+**Example:** *"I need comprehensive tests for this payment module"*
+
+---
+
+### 🎯 Specialized Tools
+
+#### Prompt Engineer
+**File:** `agents/prompt-engineer.md`
+**Model:** Opus
+**Purpose:** Meta-agent that creates/optimizes agent prompts and CLAUDE.md configuration.
+
+**When to use:**
+- Creating new custom agents
+- Optimizing existing agent performance
+- Improving CLAUDE.md delegation rules
+- Debugging agent issues
+
+**Example:** *"Create a new agent for database migration tasks"*
+
+---
+
+#### Chrome Extension Troubleshooter
 **File:** `agents/chrome-extension-troubleshooter.md`
-**Purpose:** Expert agent for debugging Chrome extension issues, service worker errors, Manifest V3 compliance, and Chrome Web Store validation.
+**Model:** Opus
+**Purpose:** Expert for Chrome extension debugging and Manifest V3 compliance.
 
 **When to use:**
 - Service worker termination issues
 - Manifest V3 migration problems
 - Chrome Web Store submission failures
-- CSP violations and security issues
-- Extension API integration problems
+- CSP violations and API integration
 
-**Usage in Claude Code:**
-```
-Use the chrome-extension-troubleshooter agent to debug this service worker issue
-```
+**Example:** *"My extension service worker keeps crashing after 30 seconds"*
 
 ## ⚡ Slash Commands
 
