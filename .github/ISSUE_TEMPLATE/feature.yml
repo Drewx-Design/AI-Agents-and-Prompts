@@ -1,0 +1,373 @@
+name: Feature Request
+description: AI-optimized feature specification for autonomous implementation
+title: "[FEATURE] "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🚀 Feature Request
+        
+        **Production Workflow:**
+        - Evidence-first: gather baseline before theorizing (saves 2-3x messages)
+        - Circuit breakers: stop at complexity × 1.5 or time limit
+        - Token efficiency: use @docs/ references (saves 80-90% tokens)
+        - Auto-closes: `feat: resolve #<number>` or `feat: close #<number>`
+        
+        **Realistic Estimates:**
+        - 🟢 Simple: 15-25 msgs (30-45 min) - single agent
+        - 🟡 Medium: 30-50 msgs (1-2 hrs) - single agent + specialist consult
+        - 🔴 High: 50-100 msgs (2-4 hrs) - 2-3 parallel Tasks
+        - ⚫ Complex: 100+ msgs (multi-session) - parallel Tasks or git worktrees
+        
+        ⚠️ **Token Reality:** Multi-agent = 15× cost. Each Task loads full 200K context independently.
+
+  - type: input
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem does this solve? (One sentence)
+      placeholder: "Users cannot save prompt configurations, forcing re-entry each session"
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: User flow + expected behavior
+      placeholder: |
+        **User Flow:**
+        1. Click "Save Configuration" in settings
+        2. Modal prompts for config name (max 50 chars, no duplicates)
+        3. Saves to chrome.storage.local with timestamp
+        4. Toast confirms: "Configuration saved"
+        5. Dropdown shows saved configs for instant loading
+        
+        **Expected:**
+        - Persists across restarts
+        - Max 20 configs (auto-delete oldest)
+        - Delete via trash icon (with confirmation)
+    validations:
+      required: true
+
+  - type: textarea
+    id: success-criteria
+    attributes:
+      label: Success Criteria
+      description: "How do we know it's complete and working?"
+      placeholder: |
+        **Functional:**
+        - [ ] Save config with name validation
+        - [ ] Load config restores all settings
+        - [ ] Delete with confirmation works
+        - [ ] Persists across browser restarts
+        
+        **Performance:**
+        - [ ] Save operation <200ms
+        - [ ] Load operation <100ms
+        
+        **Quality:**
+        - [ ] All tests pass (unit + integration)
+        - [ ] No console errors
+        - [ ] Keyboard navigation works
+      value: |
+        - [ ] Core functionality works
+        - [ ] Tests pass
+        - [ ] No regressions
+    validations:
+      required: true
+
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: Complexity
+      options:
+        - "🟢 Simple (single component, clear path)"
+        - "🟡 Medium (multiple components, testing)"
+        - "🔴 High (architectural planning, 2-3 parallel Tasks)"
+        - "⚫ Complex (multi-session, requires parallel work)"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - "🔥 Critical (Blocking/security/data loss)"
+        - "⚡ High (Significant UX impact)"
+        - "📊 Medium (Nice to have)"
+        - "💡 Low (Future consideration)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: context-files
+    attributes:
+      label: Context Files
+      description: "Files to read (use @docs/ for detailed refs)"
+      placeholder: |
+        **Core Files** (max 3-5, <500 lines each):
+        - src/components/Settings/SettingsPanel.tsx
+        - src/lib/storage/configManager.ts
+        
+        **Reference Docs** (@docs/ pattern saves 80-90% tokens):
+        - @docs/architecture/storage-patterns.md
+        - @docs/api/chrome-storage-api.md
+        
+        **Similar Patterns:**
+        - Theme manager: src/lib/storage/themeManager.ts
+        
+        **Dependencies:**
+        - Chrome storage API permissions (check manifest.json)
+        
+        💡 Don't paste full files - use @docs/ or "Read [file] and [task]"
+        💡 Prompt caching: 90% cost reduction on repeated context (5min TTL)
+    validations:
+      required: false
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence & Baseline
+      description: "Gather evidence BEFORE theorizing (prevents 2-3x wasted iterations)"
+      placeholder: |
+        **Current State:**
+        - [ ] Screenshot attached
+        - [ ] Console errors: None / [describe]
+        - [ ] Tests: `pnpm test` passing
+        - [ ] Browser: Chrome [version]
+      value: |
+        - [ ] Screenshot: Yes / No
+        - [ ] Console clean: Yes / No
+        - [ ] Tests passing: Yes / No
+    validations:
+      required: false
+
+  - type: textarea
+    id: preserved-systems
+    attributes:
+      label: Protected Systems
+      description: "What must NOT break (prevents regressions)"
+      placeholder: |
+        **Working Systems:**
+        - User auth flow (all OAuth methods)
+        - Real-time sync (WebSocket connections)
+        - Existing settings interactions
+        
+        **Performance Baselines:**
+        - Extension load: <500ms (must not exceed 800ms)
+        - Settings render: <100ms
+      value: |
+        - [ ] List systems that must keep working
+        - [ ] Performance: [metric] = [current value]
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        ## 🤖 Execution Strategy
+        
+        **Claude Code Architecture:**
+        - Main Claude can spawn parallel Tasks (max 10)
+        - Sub-agents CANNOT spawn more agents (flat hierarchy only)
+        - Each Task loads isolated 200K context (costs multiply)
+        
+        **When to Use Single Agent (🟢 🟡):**
+        ```bash
+        /implement-feature <issue-number>
+        # Claude reads CLAUDE.md, @docs/ refs automatically
+        ```
+        
+        **When to Use Parallel Tasks (🔴):**
+        ```bash
+        # Main Claude spawns 2-3 independent Tasks in one session
+        "Spawn 3 parallel Tasks:
+         - Task 1: Build UI components (src/components/)
+         - Task 2: Create API endpoints (src/api/)
+         - Task 3: Write integration tests (tests/)"
+        ```
+        
+        **When to Use Git Worktrees (⚫):**
+        ```bash
+        # Multiple Claude instances for 3+ hour parallel work
+        git worktree add ../wt-ui feature/ui
+        git worktree add ../wt-api feature/api
+        cd ../wt-ui && claude   # Terminal 1
+        cd ../wt-api && claude  # Terminal 2
+        ```
+
+  - type: dropdown
+    id: specialist-needed
+    attributes:
+      label: Specialist Agent (Optional)
+      description: "Domain expert for specific work"
+      options:
+        - "None (use main Claude)"
+        - "@figma-ui-engineer (Figma→React implementation)"
+        - "@security-auditor (Security-critical features, auth, vulnerabilities)"
+        - "@test-suite-builder (Comprehensive test coverage, TDD)"
+        - "@debug-coordinator (Complex debugging, race conditions, performance)"
+        - "@feature-orchestrator (⚫ Complex - coordinate parallel work)"
+        - "@prompt-engineer (Create/optimize agent prompts)"
+        - "@chrome-extension-troubleshooter (MV3 issues, extension debugging)"
+    validations:
+      required: false
+
+  - type: textarea
+    id: specialist-guidance
+    attributes:
+      label: Specialist Instructions (If Applicable)
+      description: "Specific instructions for the specialist agent"
+      placeholder: |
+        **For @figma-ui-engineer:**
+        Implement dashboard from Figma: [link]
+        Context: @docs/design-system.md, src/components/ui/
+
+        **For @security-auditor:**
+        Review authentication implementation in: [files]
+        Focus: XSS, CSRF, auth bypass, data leakage
+
+        **For @test-suite-builder:**
+        Create comprehensive test coverage for: [feature]
+        Include: Unit tests, integration tests, edge cases, TDD workflow
+
+        **For @debug-coordinator:**
+        Investigate: [complex bug description]
+        Focus: Race conditions, performance issues, memory leaks
+
+        **For @feature-orchestrator (⚫ Complex only):**
+        Coordinate parallel work across 3+ tasks:
+        - Task 1: UI implementation
+        - Task 2: API implementation
+        - Task 3: Test suite
+
+        **For @prompt-engineer:**
+        Create/optimize agent prompt for: [purpose]
+        Context: @docs/agent-patterns.md
+
+        **For @chrome-extension-troubleshooter:**
+        Debug MV3 issue: [description]
+        Context: Service worker, manifest, CSP violations
+    validations:
+      required: false
+
+  - type: textarea
+    id: technical-notes
+    attributes:
+      label: Technical Hints
+      description: "APIs, edge cases, implementation guidance"
+      placeholder: |
+        **API References:**
+        - Chrome Storage: https://developer.chrome.com/docs/extensions/reference/storage/
+        - Use chrome.storage.local for >5MB data
+        
+        **Implementation:**
+        - Zod validation: `z.object({ name: z.string().max(50) })`
+        - Versioning: `{ version: 1, configs: [...] }` for migrations
+        - Debounce saves (300ms)
+        
+        **Testing:**
+        - Mock: `global.chrome = { storage: { local: mockStorage } }`
+        - Test quota: simulate storage at 9.9MB
+    validations:
+      required: false
+
+  - type: input
+    id: rollback
+    attributes:
+      label: Rollback Point (High/Complex Only)
+      placeholder: "main@a1b2c3d4 or feature/stable-baseline"
+    validations:
+      required: false
+
+  - type: textarea
+    id: future-context
+    attributes:
+      label: Session Summary (For Multi-Session Work)
+      description: "2-3 sentences. Claude reads this when resuming ⚫ Complex work."
+      placeholder: |
+        Adds persistent config saving to settings panel using Chrome storage API.
+        Follows theme manager pattern (src/lib/storage/themeManager.ts). Watch for
+        MV3 service worker limitations and race conditions.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Pre-Flight
+      options:
+        - label: "Evidence gathered (screenshot + baseline + console status)"
+          required: true
+        - label: "Searched existing issues (no duplicates)"
+          required: true
+        - label: "Scoped to <180 min OR marked ⚫ Complex multi-session"
+          required: true
+        - label: "Understand: Multi-agent = 15× token cost multiplier"
+          required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        ## ⚡ Circuit Breakers (Stop Work When)
+        
+        - 🟢 Simple: >40 messages OR >60 minutes
+        - 🟡 Medium: >75 messages OR >2.5 hours
+        - 🔴 High: >150 messages OR >6 hours
+        - ⚫ Complex: No breaker (designed for multi-session)
+        
+        **When Triggered:**
+        1. Document: What's done, what's blocked, learnings
+        2. Update CLAUDE.md with new patterns
+        3. Create sub-issue for completed work
+        4. Re-scope or escalate complexity
+        
+        ```bash
+        gh issue create --title "[SUB] Progress from #<orig>" \
+          --body "Done: [list]\nBlocked: [reason]\nNext: [plan]"
+        ```
+        
+        ---
+        
+        ## 🛠️ Quick Reference
+        
+        **Magic Keywords:** `resolve`, `close`, `implement`, `fixes` + `#<number>`
+        
+        **Completion Checklist:**
+        ```bash
+        pnpm test && pnpm type-check     # Verify tests pass
+        git commit -m "feat: resolve #<number> - [description]"
+        git push origin feature/branch
+        # Manual: verify protected systems still work
+        ```
+        
+        **30/70 Rule:**
+        - You: 30% (decisions, architecture, review, edge cases)
+        - Claude: 70% (implementation, tests, docs, refactoring)
+        - Think outcomes, not files
+        
+        **Token Optimization:**
+        - Prompt caching: 90% cost reduction on repeated context
+        - Cache TTL: 5 minutes (refreshes on each use)
+        - Structure CLAUDE.md as stable prefix for maximum cache hits
+        
+        **Best Practices:**
+        - ✅ Start with evidence (not theories)
+        - ✅ Use @docs/ references (token efficiency)
+        - ✅ Follow circuit breakers (stop at limits)
+        - ✅ Delegate specialists for their domain
+        - ✅ Test protected systems after changes
+        
+        **Anti-Patterns:**
+        - ❌ Skip baseline verification
+        - ❌ Ignore circuit breakers
+        - ❌ Paste full docs inline
+        - ❌ Over-engineer simple tasks
+        - ❌ Try to nest sub-agents (not supported)

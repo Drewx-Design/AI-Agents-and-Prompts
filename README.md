@@ -15,6 +15,11 @@ AI-Agents-and-Prompts/
 │   ├── prompt-engineer.md
 │   ├── security-auditor.md
 │   └── test-suite-builder.md
+├── .github/
+│   └── ISSUE_TEMPLATE/        # GitHub issue templates
+│       ├── feature.yml
+│       ├── bug.yml
+│       └── task.yml
 ├── commands/                  # Slash commands for workflow automation (19 total)
 │   ├── Session Management/
 │   │   ├── resume-session.md
@@ -167,6 +172,62 @@ AI-Agents-and-Prompts/
 
 **Example:** *"My extension service worker keeps crashing after 30 seconds"*
 
+---
+
+## 📋 GitHub Issue Templates
+
+Three comprehensive templates optimized for AI-assisted development workflow.
+
+### Feature Request (`feature.yml`)
+**Purpose:** Structured feature specifications for autonomous implementation.
+
+**Includes:**
+- Problem statement (one sentence clarity)
+- Proposed solution with user flow
+- Success criteria (testable conditions)
+- Complexity estimation (🟢 Simple / 🟡 Medium / 🔴 High / ⚫ Complex)
+- Files to modify (with line estimates)
+- Dependencies and blockers
+- Security and performance considerations
+
+**Complexity Guide:**
+- 🟢 **Simple:** 15-25 msgs (30-45 min) - single agent
+- 🟡 **Medium:** 30-50 msgs (1-2 hrs) - single agent + specialist
+- 🔴 **High:** 50-100 msgs (2-4 hrs) - 2-3 parallel Tasks
+- ⚫ **Complex:** 100+ msgs (multi-session) - parallel Tasks/worktrees
+
+### Bug Report (`bug.yml`)
+**Purpose:** Structured bug reports with reproduction steps and context.
+
+**Includes:**
+- Bug description (observed vs expected behavior)
+- Reproduction steps
+- Environment details (browser, OS, versions)
+- Error messages and stack traces
+- Impact assessment (severity/priority)
+- Attempted solutions
+
+### Task (`task.yml`)
+**Purpose:** General development tasks and chores.
+
+**Includes:**
+- Task description
+- Acceptance criteria
+- Complexity estimate
+- Dependencies
+- Implementation notes
+
+**Usage:**
+```bash
+# These templates appear when creating issues in your GitHub repo
+# At: https://github.com/your-username/your-repo/issues/new/choose
+
+# Or use the /create-issue slash command
+/create-issue
+```
+
+---
+
 ## ⚡ Slash Commands
 
 ### Session Management
@@ -278,6 +339,12 @@ Updates the "Current Context" section after completing significant work.
    ```bash
    # Copy all commands
    cp commands/*.md /path/to/your/project/.claude/commands/
+   ```
+
+4. **Copy GitHub issue templates:**
+   ```bash
+   # Copy templates to your repo
+   cp -r .github/ISSUE_TEMPLATE /path/to/your/project/.github/
    ```
 
 ### Option 2: Symlink (Advanced)

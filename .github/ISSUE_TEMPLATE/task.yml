@@ -1,0 +1,393 @@
+name: Development Task
+description: Code refactoring, technical debt, tooling, or maintenance work
+title: "[TASK] "
+labels: ["task"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 📋 Development Task
+        
+        For refactoring, technical debt, tooling, infrastructure, dependencies, or documentation work.
+        
+        **Task Workflow:**
+        - Clear definition of done (measurable outcomes)
+        - Before/after metrics for improvements
+        - Auto-closes: `task: resolve #<number>` or `chore: close #<number>`
+        
+        **Estimates:**
+        - 🟢 Quick Win: 5-15 msgs (15-30 min) - dependency update, config change
+        - 🟡 Standard: 15-30 msgs (45-90 min) - refactor component, add tooling
+        - 🔴 Large: 30-60 msgs (2-4 hrs) - migrate architecture, major refactor
+        - ⚫ Epic: 60+ msgs (multi-session) - requires decomposition into subtasks
+
+  - type: dropdown
+    id: task-type
+    attributes:
+      label: Task Type
+      description: "Category of work"
+      options:
+        - "Refactoring (improve code structure/readability)"
+        - "Technical Debt (pay down shortcuts/legacy code)"
+        - "Tooling (developer experience, build tools, CI/CD)"
+        - "Dependencies (upgrade packages, security patches)"
+        - "Research Spike (investigate approach, time-boxed)"
+        - "Infrastructure (DevOps, deployment, monitoring)"
+        - "Documentation (technical docs, architecture, runbooks)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: objective
+    attributes:
+      label: What Needs to Be Done?
+      description: Clear, specific objective
+      placeholder: |
+        Refactor the sync service to use async/await instead of promise chains.
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Why This Matters
+      description: Context, motivation, impact
+      placeholder: |
+        **Problem:**
+        Current .then() chains are hard to debug and follow. Nested promises
+        cause callback hell in error handling.
+        
+        **Impact:**
+        - Debugging time: ~30 min per issue (vs ~10 min with async/await)
+        - Maintenance burden: 3 bugs in past month from promise chain errors
+        - New dev onboarding: confusion about promise flow
+        
+        **Benefit:**
+        Better error handling, clearer code flow, easier debugging.
+    validations:
+      required: true
+
+  - type: textarea
+    id: before-state
+    attributes:
+      label: Current State (Before)
+      description: "What exists now? Baseline metrics for comparison."
+      placeholder: |
+        **Current Implementation:**
+        - 8 files using promise chains (.then/.catch)
+        - Average function: 50 lines with 3-4 levels of nesting
+        - Error handling: try/catch in 40% of functions
+        
+        **Current Metrics:**
+        - Test coverage: 65%
+        - Build time: 12s
+        - Performance: Sync operation takes 450ms avg
+      value: |
+        **Current Implementation:**
+        - 
+        
+        **Current Metrics:**
+        - Test coverage: [%]
+        - Performance: [metric]
+    validations:
+      required: false
+
+  - type: textarea
+    id: target-state
+    attributes:
+      label: Target State (After)
+      description: "What should exist after completion?"
+      placeholder: |
+        **Target Implementation:**
+        - All sync functions use async/await
+        - Error handling: try/catch blocks at function boundaries
+        - Max 2 levels of nesting
+        
+        **Target Metrics:**
+        - Test coverage: ≥65% (maintained or improved)
+        - Build time: ≤12s (no regression)
+        - Performance: ≤450ms (no regression)
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Definition of Done
+      description: "Specific, measurable acceptance criteria"
+      placeholder: |
+        - [ ] All sync functions converted to async/await
+        - [ ] No promise chains remain (.then/.catch removed)
+        - [ ] Error handling uses try/catch consistently
+        - [ ] All tests pass without modification
+        - [ ] Performance benchmarks: no regression >5%
+        - [ ] TypeScript compilation passes
+        - [ ] Code review: readability improved
+      value: |
+        - [ ] Core functionality complete
+        - [ ] All tests pass
+        - [ ] Performance: No regression >5%
+        - [ ] No regressions in related functionality
+    validations:
+      required: true
+
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: Complexity
+      options:
+        - "🟢 Quick Win (15-30 min, single file/component)"
+        - "🟡 Standard (45-90 min, multiple files, testing)"
+        - "🔴 Large (2-4 hrs, architectural, needs planning)"
+        - "⚫ Epic (multi-session, decompose into subtasks)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies & Blockers
+      description: "What needs to happen first?"
+      placeholder: |
+        **Blocked By:**
+        - #42 - Database migration must complete first
+        - Waiting for: Infrastructure provisioning (ETA: 2 days)
+        
+        **Requires:**
+        - Node 18+ (currently on Node 16)
+        - Package approval: `@types/async-retry`
+        
+        **Blocks:**
+        - #67 - User sync feature depends on this refactor
+    validations:
+      required: false
+
+  - type: textarea
+    id: files-affected
+    attributes:
+      label: Files/Components Affected
+      description: "Scope of changes"
+      placeholder: |
+        **Files to Modify:**
+        - src/lib/sync/sync-service.ts
+        - src/lib/sync/sync-queue.ts
+        
+        **Tests to Update:**
+        - tests/unit/sync/sync-service.test.ts
+        
+        **Docs to Update:**
+        - @docs/architecture/sync-system.md
+    validations:
+      required: false
+
+  - type: textarea
+    id: approach
+    attributes:
+      label: Implementation Approach
+      description: "Strategy, alternatives considered, rollout plan"
+      placeholder: |
+        **Approach Selected:** Incremental refactor using Strangler Fig pattern
+        
+        **Alternatives Considered:**
+        1. Big-bang rewrite
+           - Pros: Clean slate
+           - Cons: High risk, long feature freeze
+           - Rejected: Too risky for core system
+        
+        2. Wrapper abstraction
+           - Pros: Complete isolation, A/B test
+           - Cons: Extra complexity, double maintenance
+           - Rejected: Overkill for this scope
+        
+        **Implementation Strategy:**
+        1. Start with leaf functions (no dependencies)
+        2. Convert one file at a time
+        3. Run tests after each file
+        4. Update integration tests last
+        
+        **Rollout:**
+        - Incremental (Strangler Fig pattern)
+        - Feature flag: `use_async_sync` for gradual rollout
+        - Keep old code for 1 release cycle
+        
+        **For Research Spikes:**
+        Time-box 2 hours. Document: Question → Options (pros/cons) → 
+        Recommendation → Next steps. Save to experiments/spike-N.md
+    validations:
+      required: false
+
+  - type: textarea
+    id: testing-strategy
+    attributes:
+      label: Testing & Verification
+      description: "How to verify this works without regressions"
+      placeholder: |
+        **Unit Tests:**
+        - All existing tests must pass unchanged
+        - Add tests for new error handling paths
+        
+        **Integration Tests:**
+        - Full workflow end-to-end
+        - Error scenarios (network failure, timeout)
+        
+        **Performance Verification:**
+        - Run benchmark: `pnpm benchmark`
+        - Baseline: 450ms avg sync time
+        - Target: ≤450ms (no regression >5%)
+        - CI fails if regression detected
+        
+        **Behavior Preservation (Refactoring):**
+        - No observable changes to functionality
+        - Tests pass without modification
+        
+        **Manual Verification:**
+        - Test full workflow in dev environment
+        - Verify user-facing behavior unchanged
+      value: |
+        - [ ] Unit tests pass
+        - [ ] Integration tests pass
+        - [ ] Performance: No regression >5%
+        - [ ] Behavior preserved (refactoring only)
+        - [ ] Manual testing: [describe]
+    validations:
+      required: false
+
+  - type: textarea
+    id: decision-doc
+    attributes:
+      label: Decision Documentation (Large/Epic Only)
+      description: "For architectural changes, document key decisions"
+      placeholder: |
+        **Decision:** Use async/await over promise chains
+        **Context:** Debugging difficulty, nested error handling
+        **Alternatives:** Promise chains + better errors, RxJS library
+        **Consequences:** +Better debugging, clearer flow | -Requires Node 14+
+        
+        💡 Save to: @docs/decisions/ADR-NNN-[topic].md (for future reference)
+    validations:
+      required: false
+
+  - type: textarea
+    id: rollback-risk
+    attributes:
+      label: Rollback Plan (Large/Epic Only)
+      description: "How to undo if this breaks production"
+      placeholder: |
+        **Risk:** Medium - changes core sync logic used by all features
+        
+        **Rollback:**
+        - Feature flag: disable `use_async_sync`
+        - Revert PR: `git revert <commit>`
+        - Keep old code for 1 release cycle
+        
+        **Monitoring:**
+        - Track sync error rates (should not increase)
+        - Alert on sync timeout >5s (baseline: 3s)
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Pre-Flight
+      options:
+        - label: "Clear definition of done (measurable outcomes)"
+          required: true
+        - label: "Before/after metrics defined (if applicable)"
+          required: false
+        - label: "Scoped to <2 hours OR marked ⚫ Epic for decomposition"
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        ## 🛠️ Claude Code Execution
+        
+        **Quick Start:**
+        ```bash
+        /implement-task <issue-number>
+        # Claude reads CLAUDE.md, follows approach, runs tests
+        ```
+        
+        **For Research Spikes:**
+        ```bash
+        # Time-boxed investigation (2 hours max)
+        "Research [question]. Document to experiments/spike-N.md:
+         - Question: [what we're answering]
+         - Options: [A vs B with pros/cons]
+         - Recommendation: [which and why]
+         - Next steps: [action items]"
+        ```
+        
+        **For Large Refactors (🔴):**
+        ```bash
+        # Experiment-driven approach
+        mkdir -p experiments
+        # Document each phase: changes → tests → outcome
+        # Iterate safely with frequent verification
+        ```
+        
+        **For Epics (⚫) - Decompose First:**
+        ```bash
+        # Break into subtasks with dependencies
+        gh issue create --title "[SUBTASK 1/3] Convert core files" \
+          --body "Part of #<epic>\nDependencies: None"
+        
+        gh issue create --title "[SUBTASK 2/3] Update tests" \
+          --body "Part of #<epic>\nDependencies: #<subtask-1>"
+        
+        gh issue create --title "[SUBTASK 3/3] Final integration" \
+          --body "Part of #<epic>\nDependencies: #<subtask-1>, #<subtask-2>"
+        ```
+        
+        **Circuit Breakers (Reassess if triggered):**
+        - 🟢 Quick Win: >25 msgs or >45 min → Is this really "quick"?
+        - 🟡 Standard: >45 msgs or >2 hrs → Does this need decomposition?
+        - 🔴 Large: >90 msgs or >5 hrs → Should this be an epic?
+        
+        Action: Document progress, assess if task needs decomposition
+        
+        ---
+        
+        ## ✅ Completion Checklist
+        
+        **Commit Message:**
+        ```bash
+        git commit -m "task: resolve #<number> - [objective]
+        
+        What: [What changed]
+        Why: [Why this matters]
+        
+        Metrics:
+        - Before: Coverage 65%, Build 12s, Perf 450ms
+        - After: Coverage 68%, Build 11s, Perf 445ms
+        - Impact: +3% coverage, -8% build, -1% perf"
+        ```
+        
+        **Verification:**
+        - [ ] All tests pass: `pnpm test`
+        - [ ] TypeScript compiles: `pnpm type-check`
+        - [ ] Linting clean: `pnpm lint`
+        - [ ] Build succeeds: `pnpm build`
+        - [ ] Acceptance criteria met (check list above)
+        - [ ] Before/after metrics documented
+        - [ ] No regressions in related functionality
+        
+        **For Large/Epic Tasks:**
+        - [ ] Decision documented (ADR if architectural)
+        - [ ] Alternatives considered were documented
+        - [ ] Knowledge captured (even if experiment failed)
+        
+        **Best Practices:**
+        - ✅ Clear before/after metrics (shows value)
+        - ✅ Preserve behavior (tests pass unchanged for refactoring)
+        - ✅ Incremental approach (smaller is safer)
+        - ✅ Document decisions and alternatives (future context)
+        
+        **Anti-Patterns:**
+        - ❌ Vague completion criteria
+        - ❌ Mix multiple unrelated changes
+        - ❌ Skip performance verification
+        - ❌ No rollback plan for risky changes

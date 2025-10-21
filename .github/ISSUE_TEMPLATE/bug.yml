@@ -1,0 +1,241 @@
+name: Bug Report
+description: Report a bug for AI-assisted debugging and fixing
+title: "[BUG] "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🐛 Bug Report
+        
+        ⚠️ **Security Vulnerabilities:** Do NOT report security issues here.
+        For vulnerabilities (auth bypass, XSS, data exposure), use private reporting.
+        
+        **AI Debugging Workflow:**
+        - Evidence-first: gather data before theorizing (saves 2-3× debugging time)
+        - Auto-closes: `fix: resolve #<number>` or `fix: close #<number>`
+        - 5-phase lifecycle: Reproduce → Isolate → Understand → Fix → Prevent
+        
+        **Debugging Estimates:**
+        - 🟢 Simple: 10-20 msgs (20-40 min) - clear error, single function
+        - 🟡 Medium: 25-40 msgs (45-90 min) - multiple files, investigation needed
+        - 🔴 High: 50-80 msgs (2-3 hrs) - race conditions, complex investigation
+        - ⚫ Critical: 80+ msgs (multi-session) - system-wide impact
+
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: What's Broken?
+      description: What happens now? Be specific.
+      placeholder: |
+        When I click Save, spinner appears but never completes. After 30 seconds,
+        spinner disappears with no error. Settings are not saved.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: What should happen instead?
+      placeholder: |
+        Should save within 2 seconds, show "Configuration saved" toast, and update UI.
+        If save fails, should show error explaining why.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction Steps
+      description: "CRITICAL: Exact steps to reproduce"
+      placeholder: |
+        1. Open settings via Cmd+Shift+E
+        2. Navigate to Settings → Configurations
+        3. Change 3 settings: [specify which]
+        4. Click "Save Configuration"
+        5. Enter "Test Config" in modal
+        6. Click Save
+        7. Observe: Spinner appears and persists
+        8. After 30s: Spinner disappears, no toast
+        9. Verify: Settings not saved (refresh and check)
+        
+        **Reproducibility:** Always / Often (>75%) / Sometimes (25-75%) / Rarely
+      value: |
+        1. 
+        2. 
+        3. 
+        4. Observe:
+        5. Verify:
+        
+        **Reproducibility:** [Always / Often / Sometimes / Rarely]
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - "🔴 Critical (Data loss, security vulnerability, blocks core workflow)"
+        - "🟠 High (Major feature broken, impacts >50% users, difficult workaround)"
+        - "🟡 Medium (Feature partially broken, impacts <50% users, workaround exists)"
+        - "🟢 Low (Cosmetic, rare edge case, minimal impact)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence (Console/Network/Screenshots)
+      description: "REQUIRED: Gather evidence FIRST (prevents wasted debugging time)"
+      placeholder: |
+        **Console Errors** (F12 → Console):
+        ```
+        Error: Cannot read property 'save' of undefined
+            at ConfigManager.saveConfig (configManager.ts:123:15)
+        ```
+        
+        **Network** (F12 → Network):
+        - Request to /api/config/save: Status [code]
+        - Response: [paste if relevant]
+        
+        **DevTools State**:
+        - Chrome storage: [X]MB / 10MB
+        - Service worker: Active / Terminated / Error
+        
+        **Screenshots:** [Drag and drop here]
+      render: shell
+      value: |
+        **Console Errors:**
+        ```
+        [Paste here]
+        ```
+        
+        **Network:**
+        - Request: [endpoint] Status: [code]
+        
+        **DevTools:**
+        - Storage: [usage]
+        - Service worker: [status]
+        
+        **Screenshots:** [Below]
+    validations:
+      required: true
+
+  - type: textarea
+    id: attempted-solutions
+    attributes:
+      label: What Have You Tried?
+      description: "Attempted fixes/workarounds (avoids duplicate suggestions)"
+      placeholder: |
+        - Cleared browser cache → No change
+        - Changed timeout 30s → 60s → Still fails
+        - Tested different config → Same error
+        - Checked storage quota → Not exceeded
+    validations:
+      required: false
+
+  - type: textarea
+    id: affected-files
+    attributes:
+      label: Suspected Files/Components
+      description: "Where might the bug be?"
+      placeholder: |
+        - src/components/Settings/ConfigSaveButton.tsx
+        - src/lib/storage/configManager.ts
+        - src/hooks/useConfigSave.ts
+        
+        **Recent Changes:**
+        - PR #67 - Updated storage error handling (merged 3 days ago)
+    validations:
+      required: false
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      value: |
+        **Browser:** Chrome [version] / Firefox [version] / Safari [version]
+        **OS:** macOS [version] / Windows [version] / Linux [distro]
+        **Extension Version:** [if applicable]
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Pre-Flight
+      options:
+        - label: "Evidence gathered (console + network + screenshots attached above)"
+          required: true
+        - label: "Searched existing issues (no duplicates)"
+          required: true
+        - label: "Can reproduce consistently OR provided reproducibility rate"
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        ## 🛠️ Claude Code Debugging
+        
+        **Quick Start:**
+        ```bash
+        /fix-issue <issue-number>
+        # Claude follows: Reproduce → Isolate → Understand → Fix → Prevent
+        ```
+        
+        **For Complex Bugs (🔴 ⚫) - Experiment Log:**
+        ```bash
+        # Document investigation attempts
+        mkdir -p experiments
+        cat > experiments/bug-$ISSUE_NUMBER.md << 'EOF'
+        ## Goal: [What we're trying to fix]
+        
+        ## Attempt 1
+        - Changes: [what was modified]
+        - Outcome: [success/failure]
+        - Learned: [new insights]
+        - Next: [revised plan]
+        EOF
+        # Iterate and document each attempt
+        ```
+        
+        **Circuit Breakers (All investigation phases):**
+        - 🟢 Simple: >30 msgs or >60 min (read logs → fix → test)
+        - 🟡 Medium: >60 msgs or >2 hrs (reproduce → isolate → fix → regression test)
+        - 🔴 High: >120 msgs or >4 hrs (deep investigation → experimentation → thorough test)
+        
+        When triggered: Document findings, create sub-issue, escalate
+        
+        ---
+        
+        ## ✅ Completion Checklist
+        
+        **Commit Message:**
+        ```bash
+        git commit -m "fix: resolve #<number> - [symptom]
+        
+        Root cause: [Why bug occurred]
+        Fix: [What changed]
+        Testing: [Added regression test for X]"
+        ```
+        
+        **Required for Medium+ (🟡 🔴 ⚫):**
+        - [ ] Regression test added (prevents recurrence)
+        - [ ] Related functionality verified (no side effects)
+        - [ ] Docs updated if bug revealed knowledge gap
+        
+        **Best Practices:**
+        - ✅ Evidence before theory (saves 2-3× time)
+        - ✅ Minimal fix (<3 files, <50 lines when possible)
+        - ✅ Follow circuit breakers (stop at limits)
+        - ✅ Add regression test for Medium+
+        
+        **Anti-Patterns:**
+        - ❌ Skip reproduction (superficial fixes)
+        - ❌ Theorize without evidence (wastes time)
+        - ❌ Over-engineer fix (regression risk)
+        - ❌ Skip regression test (bug recurs)
